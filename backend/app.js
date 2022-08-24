@@ -2,8 +2,8 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 
-const Sauce = require('./models/Sauce');
-const User = require('./models/User');
+const saucesRoutes = require('./routes/sauces');
+const saucesLogin = require('./routes/login');
 
 mongoose.connect('mongodb+srv://Katya:xtj8yW7V7orqfcfe@cluster87.jeqpvfv.mongodb.net/?retryWrites=true&w=majority',
     {
@@ -22,6 +22,10 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use(bodyParser.json());
+
+app.use('/api/sauces', saucesRoutes);
+app.use('/api/auth', saucesLogin);
 
 
 module.exports = app;
