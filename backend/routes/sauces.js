@@ -2,7 +2,11 @@ const express = require('express');
 
 const router = express.Router();
 
-const Sauce = require('../models/Sauce');
+
+
+const sauceCtrl = require('../controllers/sauces');
+
+router.post('/', sauceCtrl.createSauce);
 
 router.delete('/:id', (req, res, next) => {
     Sauce.deleteOne({ _id: req.params.id })
