@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const { error } = require('console');
 
 const User = require('../models/User');
@@ -20,7 +21,7 @@ exports.signup = (req, res, next) => {
 exports.login = (req, res, next) => {
     User.findOne({ email: req.body.email })
         .then(user => {
-            if (email === null) {
+            if (user === null) {
                 res.status(401).json({ message: 'Paire identifiant/mot de passe incorrecte' })
             } else {
                 bcrypt.compare(req.body.password, user.password)
@@ -30,7 +31,12 @@ exports.login = (req, res, next) => {
                         } else {
                             res.status(200).json({
                                 userId: user._id,
-                                token: 'TOKEN'
+                                token: jwt.sign(
+                                    //userId c'est pour que les autres utilisateurs pouvez pas modifier ma sauce
+                                    { userId: user._id },
+                                    'RANDOM_TOKEN_SECRET',
+                                    { expiresIn: '24h' }
+                                )
                             });
                         }
                     })
