@@ -3,31 +3,17 @@ const Sauce = require('../models/Sauce');
 
 //logique de création de sauce
 exports.createSauce = (req, res, next) => {
+    const sauceObject = JSON.parse(req.body.sauce);
+    delete sauceObject._id;
+    delete sauceObject._userId;
     const sauce = new Sauce({
-        userId: req.body.title,
-        name: req.body.name,
-        manufacturer: req.body.manufacturer,
-        description: req.body.description,
-        mainPepper: req.body.mainPepper,
-        imageUrl: req.body.imageUrl,
-        heat: req.body.heat,
-        likes: req.body.likes,
-        dislikes: req.body.dislikes,
-        //userLiked: { type: ["String <userId>"], required: true },
-        //userDisliked: { type: ["String <userId>"], required: true },
+        ...sauceObject,
+        userId: req.auth.userId,
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     });
-    sauce.save().then(() => {
-        res.status(201).json({
-            message: 'Sauce saved successfully!'
-        });
-    }
-    ).catch(
-        (error) => {
-            res.status(400).json({
-                error: error
-            });
-        }
-    );
+    sauce.save()
+        .then(() => { res.status(201).json({ message: 'Sauce enregistrée!' }) })
+        .catch(error => { res.status(400).json({ error }) })
 };
 
 exports.modifySauce = (req, res, next) => {
@@ -41,8 +27,8 @@ exports.modifySauce = (req, res, next) => {
         heat: req.body.heat,
         likes: req.body.likes,
         dislikes: req.body.dislikes,
-        //userLiked: { type: ["String <userId>"], required: true },
-        //userDisliked: { type: ["String <userId>"], required: true },
+        //userLiked: { type: Array, required: true },
+        //userDisliked: { type: Array, required: true },
     });
     Sauce.updateOne({ _id: req.params.id }, sauce)
         .then(() => {
