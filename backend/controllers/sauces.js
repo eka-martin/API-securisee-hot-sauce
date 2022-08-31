@@ -91,3 +91,35 @@ exports.searchAllSauces = (req, res, next) => {
             }
         );
 };
+
+// Fonction pour la gestion des "likes/dislikes"
+exports.likeSauce = (req, res, next) => {
+    Sauce.findOne({ _id: req.params.id })
+        .then(sauce => {
+            // Si l'utilisateur n'a pas encore liké ou disliké une sauce
+            if (!sauce.usersDisliked.includes(req.body.userId) && !sauce.usersLiked.includes(req.body.userId)) {
+                if (req.body.like == 1) { // L'utilisateur aime la sauce
+                    sauce.usersLiked.push(req.body.userId);
+                    sauce.likes += req.body.like;
+                } else if (req.body.like == -1) { // L'utilisateur n'aime pas la sauce
+                    sauce.usersDisliked.push(req.body.userId);
+                    sauce.dislikes -= req.body.like;
+                };
+            };
+            // Si l'utilisateur veut annuler son "like"
+            if (sauce.usersLiked.includes(req.body.userId) && req.body.like == 0) {
+                const likesUserIndex = sauce.usersLiked.findIndex(user => user === req.body.userId);
+                sauce.usersLiked.splice(likesUserIndex, 1);
+                sauce.likes -= 1;
+            };
+            // Si l'utilisateur veut annuler son "dislike"
+            if (sauce.usersDisliked.includes(req.body.userId) && req.body.like == 0) {
+                const likesUserIndex = sauce.usersDisliked.findIndex(user => user === req.body.userId);
+                sauce.usersDisliked.splice(likesUserIndex, 1);
+                sauce.dislikes -= 1;
+            }
+            sauce.save();
+            res.status(201).json({ message: 'Like / Dislike mis à jour' });
+        })
+        .catch(error => res.status(500).json({ error }));
+};
