@@ -2,7 +2,8 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { error } = require('console');
-//require('dotenv').config();
+require('dotenv').config();
+//const { secret } = require("../config")
 
 
 exports.signup = (req, res, next) => {
@@ -35,7 +36,7 @@ exports.login = (req, res, next) => {
                                 token: jwt.sign(
                                     //userId c'est pour que les autres utilisateurs pouvez pas modifier ma sauce
                                     { userId: user._id },
-                                    'RANDOM_TOKEN_SECRET',
+                                    process.env.SECRET_TOKEN,
                                     { expiresIn: '24h' }
                                 )
                             });
