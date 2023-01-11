@@ -1,5 +1,6 @@
 Une « galerie de sauces » permettant aux utilisateurs de télécharger leurs sauces piquantes préférées et de liker ou disliker les sauces que d'autres partagent. Le front-end de l'application a été développé à l'aide d'Angular. l'API de cette application est construite selon des pratiques de code sécurisées
-#ROUTES
+
+Les #ROUTES pour tester chez Postman
 
 -------------------------------------------
 ##La route POST pour créer un compte
